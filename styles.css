@@ -43,7 +43,7 @@ button:disabled {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 3px solid #f28320;
+  outline: 3px solid var(--ink);
   outline-offset: 4px;
 }
 [hidden] {
@@ -1008,7 +1008,7 @@ h1 em {
   background: var(--lime);
 }
 .switch input:focus-visible + .switch-track {
-  outline: 3px solid #f28320;
+  outline: 3px solid var(--ink);
   outline-offset: 4px;
 }
 .session-clock {
@@ -1928,4 +1928,8 @@ dialog li {
   .kickoff-ball {
     transform: none;
   }
+}
+
+.pitch button:focus-visible {
+  outline-color: var(--lime);
 }
