@@ -1,20 +1,392 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <script src="script3.js" defer></script>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    <h1>Moving Ball</h1>
-    <label for="slider">Change speed</label>
-    <input type="range" name="Slider" id="slider" min="0" max="2000" value="1000">
-    <img id="ball" src="fcb-soccer-ball.png" width="100px" height="100px" onclick=ballMove()>
-</body>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f5ef" />
+    <meta
+      name="description"
+      content="A little football, a lot of fun. Kick a bouncing soccer ball, find your pace, and beat your personal best in a 30-second sprint."
+    />
+    <meta property="og:title" content="Speedball — All ball. No sidelines." />
+    <meta
+      property="og:description"
+      content="Your own little soccer playground. Find your pace, chase the ball, and make every touch count."
+    />
+    <meta property="og:type" content="website" />
+    <title>Speedball — All ball. No sidelines.</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#playground">Skip to the playground</a>
+    <div class="site-shell">
+      <header class="site-header">
+        <a href="./" class="wordmark" aria-label="Speedball home"
+          ><span class="brand-mark" aria-hidden="true"
+            ><i></i><i></i><i></i></span
+          >SPEEDBALL<span class="brand-period">.</span></a
+        >
+        <nav aria-label="Main navigation">
+          <button type="button" class="text-button" id="how-to-open">
+            <span class="help-icon" aria-hidden="true">?</span> How to play</button
+          ><a
+            class="source-link"
+            href="https://github.com/fernandohmachado8/speedball"
+            target="_blank"
+            rel="noopener noreferrer"
+            >View source <span aria-hidden="true">↗</span
+            ><span class="sr-only"> (opens in a new tab)</span></a
+          >
+        </nav>
+      </header>
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">
+              <span class="lime-dot" aria-hidden="true"></span> Less scrolling.
+              More playing.
+            </p>
+            <h1 id="page-title">All ball. <em>No sidelines.</em></h1>
+            <p class="intro-description">
+              A little football. A little focus. A whole lot of “one more go.”
+            </p>
+          </div>
+          <div class="intro-note">
+            <span class="note-icon" aria-hidden="true">↗</span>
+            <p>Find your pace.<br />Make every touch count.</p>
+            <span class="note-scribble" aria-hidden="true">Let's play.</span>
+          </div>
+        </section>
+        <section
+          class="playground"
+          id="playground"
+          aria-label="Soccer playground"
+        >
+          <div class="game-column">
+            <div class="scoreboard" aria-label="Session statistics">
+              <div class="score-stat">
+                <span class="stat-label">Your touches</span
+                ><strong id="touches">00</strong
+                ><span class="stat-caption">Keep the ball rolling</span>
+              </div>
+              <div class="score-stat">
+                <span class="stat-label">Accuracy</span
+                ><strong id="accuracy">—<small>%</small></strong
+                ><span class="stat-caption"
+                  >Ball clicks / all pitch clicks</span
+                >
+              </div>
+              <div class="score-stat">
+                <span class="stat-label"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M8 3h8v6a4 4 0 0 1-8 0V3Zm0 2H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v6m-4 2h8"
+                    />
+                  </svg>
+                  Best sprint</span
+                ><strong id="best">00</strong
+                ><span class="stat-caption" id="best-caption"
+                  >Your personal record</span
+                >
+              </div>
+            </div>
+            <div class="pitch-shell">
+              <div class="pitch-topbar">
+                <span
+                  ><i class="status-dot" id="status-dot" aria-hidden="true"></i
+                  ><span id="pitch-status">Ready for kickoff</span></span
+                ><span class="pitch-mode" id="pitch-mode"
+                  >FREE PLAY <span aria-hidden="true">∞</span></span
+                >
+              </div>
+              <div
+                class="pitch"
+                id="pitch"
+                data-phase="ready"
+                aria-label="Soccer pitch. Click or tap the moving ball to kick it."
+              >
+                <div class="pitch-lines" aria-hidden="true">
+                  <div class="halfway"></div>
+                  <div class="center-circle"></div>
+                  <div class="center-spot"></div>
+                  <div class="penalty-area penalty-left"><i></i></div>
+                  <div class="penalty-area penalty-right"><i></i></div>
+                  <div class="penalty-arc arc-left"></div>
+                  <div class="penalty-arc arc-right"></div>
+                  <span class="corner corner-tl"></span
+                  ><span class="corner corner-tr"></span
+                  ><span class="corner corner-bl"></span
+                  ><span class="corner corner-br"></span>
+                </div>
+                <div
+                  class="ball-trail"
+                  id="ball-trail"
+                  aria-hidden="true"
+                ></div>
+                <div class="effects" id="effects" aria-hidden="true"></div>
+                <button
+                  class="ball"
+                  id="ball"
+                  type="button"
+                  aria-label="Kick the soccer ball"
+                  tabindex="-1"
+                  disabled
+                >
+                  <img
+                    src="assets/ball.svg"
+                    alt=""
+                    width="200"
+                    height="200"
+                    draggable="false"
+                  />
+                </button>
+                <div class="pitch-overlay" id="pitch-overlay">
+                  <div class="overlay-content">
+                    <img
+                      class="kickoff-ball"
+                      src="assets/ball.svg"
+                      alt=""
+                      width="200"
+                      height="200"
+                    />
+                    <p class="overlay-eyebrow" id="overlay-eyebrow">
+                      NO BOOTS REQUIRED
+                    </p>
+                    <h2 id="overlay-title">Your pitch. Your pace.</h2>
+                    <p id="overlay-description">
+                      Chase the ball. Click to kick. Find your flow.
+                    </p>
+                    <button
+                      type="button"
+                      class="start-button"
+                      data-action="play"
+                    >
+                      <span id="overlay-button-label">Let’s play</span
+                      ><span aria-hidden="true">↗</span>
+                    </button>
+                    <p class="overlay-footnote" id="overlay-footnote">
+                      Free play · No timer, just good touches
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="pitch-bottom">
+                <span
+                  ><span class="mini-cross" aria-hidden="true">✳</span>
+                  <span id="pitch-tip"
+                    >Click or tap the ball to give it a kick.</span
+                  ></span
+                ><span class="bounce-label"
+                  >WALL BOUNCES <b id="bounces">00</b></span
+                >
+              </div>
+            </div>
+            <p class="game-caption">
+              <span
+                ><span class="caption-dot" aria-hidden="true"></span> A tiny
+                playground for your inner footballer.</span
+              ><span>100% browser. 0% pressure.</span>
+            </p>
+          </div>
+          <aside class="control-panel" aria-labelledby="controls-title">
+            <p class="eyebrow panel-eyebrow">The control room</p>
+            <h2 id="controls-title">Make it your game.</h2>
+            <p class="panel-intro">A quick break, on your terms.</p>
+            <fieldset class="mode-fieldset">
+              <legend>01 <span>Choose your mode</span></legend>
+              <div class="mode-switch" role="group" aria-label="Game mode">
+                <button
+                  type="button"
+                  data-mode="free"
+                  class="is-active"
+                  aria-pressed="true"
+                >
+                  Free play <span aria-hidden="true">∞</span></button
+                ><button type="button" data-mode="sprint" aria-pressed="false">
+                  30s sprint <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+              <p class="control-help" id="mode-help">
+                No countdown. Just you and the ball.
+              </p>
+            </fieldset>
+            <div class="speed-control">
+              <label for="speed"
+                >02 <span>Find your pace</span
+                ><output id="speed-output" for="speed"
+                  >1.00<span>×</span></output
+                ></label
+              ><input
+                type="range"
+                id="speed"
+                name="speed"
+                min="0.5"
+                max="3"
+                step="0.25"
+                value="1"
+                aria-valuetext="1 times speed"
+              />
+              <div class="range-labels">
+                <span>Easy does it</span><span>Full send</span>
+              </div>
+              <div
+                class="speed-presets"
+                role="group"
+                aria-label="Speed presets"
+              >
+                <button type="button" data-speed="0.5" aria-pressed="false">
+                  Chill</button
+                ><button
+                  type="button"
+                  data-speed="1"
+                  class="is-active"
+                  aria-pressed="true"
+                >
+                  Classic</button
+                ><button type="button" data-speed="2" aria-pressed="false">
+                  Turbo <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            </div>
+            <label class="trail-option" for="trail"
+              ><span
+                ><strong>Leave a little trail</strong
+                ><small>Follow the ball’s movement</small></span
+              ><span class="switch"
+                ><input type="checkbox" id="trail" checked /><span
+                  class="switch-track"
+                  aria-hidden="true"
+                ></span></span
+            ></label>
+            <div class="session-clock">
+              <div>
+                <span class="clock-label" id="clock-label">Room to play</span
+                ><strong id="clock">∞</strong>
+              </div>
+              <span class="clock-symbol" aria-hidden="true">↗</span>
+              <div class="clock-progress" id="clock-progress" hidden>
+                <span id="clock-progress-fill"></span>
+              </div>
+            </div>
+            <div class="session-actions">
+              <button
+                type="button"
+                class="play-button"
+                id="play-button"
+                data-action="play"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path id="play-icon" d="m6 3 10 7-10 7Z" /></svg
+                ><span id="play-label">Start playing</span></button
+              ><button type="button" class="reset-button" id="reset-button">
+                <span aria-hidden="true">↺</span> Reset
+              </button>
+            </div>
+            <div class="keyboard-hints">
+              <p><kbd>Space</kbd><span>Play / pause</span></p>
+              <p><kbd>R</kbd><span>Fresh start</span></p>
+              <p>
+                <kbd>Tab</kbd> + <kbd>Enter</kbd><span>Focus ball & kick</span>
+              </p>
+            </div>
+          </aside>
+        </section>
+        <section class="how-it-works" aria-label="Quick instructions">
+          <p>
+            <b>01</b
+            ><span
+              >Pick a pace.<small
+                >Start slow. Turn it up when you’re ready.</small
+              ></span
+            >
+          </p>
+          <p>
+            <b>02</b
+            ><span
+              >Chase the ball.<small
+                >Click or tap it. Every touch counts.</small
+              ></span
+            >
+          </p>
+          <p>
+            <b>03</b
+            ><span
+              >Find your flow.<small
+                >Go freestyle, or race the 30-second clock.</small
+              ></span
+            >
+          </p>
+        </section>
+        <p
+          class="sr-only"
+          id="announcement"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        ></p>
+        <noscript
+          ><p class="noscript-notice">
+            Speedball needs JavaScript to move the ball. Please enable it in
+            your browser to play.
+          </p></noscript
+        >
+      </main>
+      <footer>
+        <span class="footer-mark">SPEEDBALL.</span>
+        <p>
+          Made for the fun of it. By
+          <a
+            href="https://github.com/fernandohmachado8"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Fernando Machado<span class="sr-only">
+              (opens in a new tab)</span
+            ></a
+          >.
+        </p>
+        <span class="footer-tag"
+          >STAY PLAYFUL <span aria-hidden="true">↗</span></span
+        >
+      </footer>
+    </div>
+    <dialog id="how-to-dialog" aria-labelledby="dialog-title">
+      <form method="dialog">
+        <button class="dialog-close" aria-label="Close instructions">×</button>
+      </form>
+      <p class="eyebrow">A quick warm-up</p>
+      <h2 id="dialog-title">One ball. Endless “again.”</h2>
+      <p>
+        Press <strong>Start playing</strong>, then click or tap the moving ball.
+        Each touch gives it a new direction and adds one to your score. Click
+        the turf and your accuracy drops.
+      </p>
+      <ol>
+        <li>
+          <strong>Free play:</strong> move at your own pace, for as long as you
+          like.
+        </li>
+        <li>
+          <strong>30s sprint:</strong> get as many touches as you can before the
+          clock runs out. Your best completed sprint is saved in this browser
+          when storage is available.
+        </li>
+        <li>
+          <strong>Your controls:</strong> adjust speed at any time. Space plays
+          or pauses when you’re not using a control; R resets. You can also Tab
+          to the ball and press Enter to kick.
+        </li>
+      </ol>
+      <p class="dialog-note">
+        Switching mode starts a fresh session. Leaving the tab pauses your game
+        automatically. No account, no downloads, no pressure.
+      </p>
+      <form method="dialog">
+        <button class="dialog-done">
+          Got it. Let’s play <span aria-hidden="true">↗</span>
+        </button>
+      </form>
+    </dialog>
+  </body>
 </html>

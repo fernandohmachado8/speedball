@@ -1,0 +1,11 @@
+{
+  "name": "speedball",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A small soccer playground built with HTML, CSS and JavaScript",
+  "scripts": {
+    "test": "node --test tests/physics.test.mjs",
+    "check": "node --check app.js && node --check physics.js"
+  }
+}
